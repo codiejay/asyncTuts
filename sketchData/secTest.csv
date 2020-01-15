@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Nasa Sketch</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+  <canvas id='myChart' ></canvas>
+  
+<script>
+  async function getNasaData() { 
+    years = [];
+    temps = [];
+    let nasaData = await fetch('secondary.csv');
+    let rawData =  await nasaData.text()
+      .then(textData => { 
+        return textData.split('\n')
+      })
+        .then(newData => { 
+          let dataArr = newData.splice(2);
+          dataArr.forEach(data => { 
+            let rawData = data.split(',');
+            rawData.some(item => { 
+              if(rawData.indexOf(item) === 0) { 
+                years.push(item);
+                // return rawData.indexOf(item) === 0;
+              }
+              else if(rawData.indexOf(item) === 1) { 
+                temps.push(parseFloat(item) + 14);
+                return rawData.indexOf(item) === 1;
+              }
+              // console.log(item)
+            })
+          })
+          
+        })
+    return years,temps;
+  }
+
+  async function drawChart() {
+    getNasaData()
+      .then(chartData => { 
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const chart = new Chart(ctx, {
+       // The type of chart we want to create
+       type: 'pie',
+
+      // The data for our dataset
+      data: {
+        labels: chartData[0],
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'orange',
+            data: chartData[1],
+            fill: false,
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+      })
+  }
+
+  drawChart()
+</script>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Nasa Sketch</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+  <canvas id='myChart' ></canvas>
+  
+<script>
+  async function getNasaData() { 
+    years = [];
+    temps = [];
+    let nasaData = await fetch('secondary.csv');
+    let rawData =  await nasaData.text()
+      .then(textData => { 
+        return textData.split('\n')
+      })
+        .then(newData => { 
+          let dataArr = newData.splice(2);
+          dataArr.forEach(data => { 
+            let rawData = data.split(',');
+            rawData.some(item => { 
+              if(rawData.indexOf(item) === 0) { 
+                years.push(item);
+                // return rawData.indexOf(item) === 0;
+              }
+              else if(rawData.indexOf(item) === 1) { 
+                temps.push(parseFloat(item) + 14);
+                return rawData.indexOf(item) === 1;
+              }
+              // console.log(item)
+            })
+          })
+          
+        })
+    return years,temps;
+  }
+
+  async function drawChart() {
+    getNasaData()
+      .then(chartData => { 
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const chart = new Chart(ctx, {
+       // The type of chart we want to create
+       type: 'pie',
+
+      // The data for our dataset
+      data: {
+        labels: chartData[0],
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'orange',
+            data: chartData[1],
+            fill: false,
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+      })
+  }
+
+  drawChart()
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Nasa Sketch</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+  <canvas id='myChart' ></canvas>
+  
+<script>
+  async function getTempData() { 
+    let years = [];
+    let jan = [];
+    let feb = [];
+    let march = [];
+    let nasaData = await fetch('secondary.csv');
+    let rawData =  await nasaData.text()
+      .then(textData => { 
+        return textData.split('\n')
+      })
+        .then(newData => { 
+          let dataArr = newData.splice(2);
+          dataArr.forEach(data => { 
+            let rawData = data.split(',');
+            rawData.some(item => { 
+              if(rawData.indexOf(item) === 0) { 
+                years.push(item);
+              }
+              else if(rawData.indexOf(item) === 1) { 
+                jan.push(parseFloat(item) + 14);
+              }
+              else if(rawData.indexOf(item) === 2) { 
+                feb.push(parseFloat(item) + 16);
+              }
+              else if(rawData.indexOf(item) === 3) { 
+                march.push(parseFloat(item) + 15);
+                return rawData.indexOf(item) === 1;
+              }
+            })
+          })
+        })
+       return [years, jan, feb, march];
+  }
+
+  async function drawChart() {
+    await getTempData()
+      .then(chartData => {
+        console.log(chartData) 
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const chart = new Chart(ctx, {
+       // The type of chart we want to create
+       type: 'line',
+
+      // The data for our dataset
+      data: {
+        labels: chartData[0],
+        datasets: [{
+            label: 'January',
+            backgroundColor: 'red',
+            borderColor: 'orange',
+            data: chartData[1],
+            fill: false,
+        },
+        {
+            label: 'Febuary',
+            backgroundColor: 'orange',
+            borderColor: 'violet',
+            data: chartData[2],
+            fill: false,
+            type: 'line'
+        },
+        {
+            label: 'March',
+            backgroundColor: 'blue',
+            borderColor: 'pink',
+            data: chartData[3],
+            fill: false,
+        },]
+    },
+
+    // Configuration options go here
+    options: {
+      animation: { 
+        easing: 'easeOutBounce',
+      },
+      responsive: true,
+      scales: {
+            yAxes: [{
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: (value, index, values) => {
+                        return `${value} °`
+                    }
+                }
+            }]
+        }
+    }
+    });
+  })
+
+}
+
+  drawChart()
+</script>
+</body>
+</html>
